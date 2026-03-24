@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/stxa005/Task-Tracker-CLI/models"
+	"github.com/jabrail059/Task-Tracker-CLI/models"
 )
 
 type Storage interface {

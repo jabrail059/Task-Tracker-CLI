@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/stxa005/Task-Tracker-CLI/commands"
-	"github.com/stxa005/Task-Tracker-CLI/models"
-	"github.com/stxa005/Task-Tracker-CLI/storage"
+	"github.com/jabrail059/Task-Tracker-CLI/commands"
+	"github.com/jabrail059/Task-Tracker-CLI/models"
+	"github.com/jabrail059/Task-Tracker-CLI/storage"
 )
 
 func main() {
