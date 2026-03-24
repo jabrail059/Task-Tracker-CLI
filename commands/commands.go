@@ -24,3 +24,19 @@ func Delete(s storage.Storage, Id int) error {
 func Done(s storage.Storage, Id int) error {
 	return s.Done(Id)
 }
+
+func InProgress(s storage.Storage, Id int) error {
+	return s.InProgress(Id)
+}
+
+func GetDoneTasks(s storage.Storage) []models.Task {
+	return s.GetDoneTasks()
+}
+
+func GetInProgressTasks(s storage.Storage) []models.Task {
+	return s.GetInProgressTasks()
+}
+
+func Update(s storage.Storage, Id int, NewDescription string) error {
+	return s.Update(Id, NewDescription)
+}

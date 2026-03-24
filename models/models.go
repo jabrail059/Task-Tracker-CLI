@@ -1,7 +1,11 @@
 package models
 
+import "time"
+
 type Task struct {
 	ID          int
 	Description string
-	Completed   bool
+	Status      string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }

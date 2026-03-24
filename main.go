@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/stxa005/Task-Tracker-CLI/commands"
+	"github.com/stxa005/Task-Tracker-CLI/models"
 	"github.com/stxa005/Task-Tracker-CLI/storage"
 )
 
@@ -48,13 +49,31 @@ func main() {
 		}
 		fmt.Printf("Задача добавлена с ID: %d\n", task.ID)
 	case "list":
-		listOfTasks := commands.GetAll(store)
-		if len(listOfTasks) == 0 {
-			fmt.Println("Задач нет")
-			return
-		}
-		for _, task := range listOfTasks {
-			fmt.Printf("ID: %d; Задача: %s; Статус: %v\n", task.ID, task.Description, task.Completed)
+		switch {
+		case len(args) == 3 && args[2] == "done":
+			DoneTasks := commands.GetDoneTasks(store)
+			if len(DoneTasks) == 0 {
+				fmt.Println("Выполненных задач нет.")
+				return
+			}
+			PrintTasks(DoneTasks)
+		case len(args) == 3 && args[2] == "in-progress":
+			InProgressTasks := commands.GetInProgressTasks(store)
+			if len(InProgressTasks) == 0 {
+				fmt.Println("Не выполненных задач нет.")
+				return
+			}
+			PrintTasks(InProgressTasks)
+		default:
+			ListOfTasks := commands.GetAll(store)
+			if len(ListOfTasks) == 0 {
+				fmt.Println("Задач нет")
+				return
+			}
+			if len(args) > 2 {
+				fmt.Printf("Команда не распознана: %s\n", args[3])
+			}
+			PrintTasks(ListOfTasks)
 		}
 	case "delete":
 		if len(args) < 3 {
@@ -74,12 +93,12 @@ func main() {
 		fmt.Printf("Id: %d. Задача удалена\n", Id)
 	case "done":
 		if len(args) < 3 {
-			fmt.Println("Ошибка! Укажите Id задачи!")
+			fmt.Println("Ошибка! Недостаточно аргументов!")
 			return
 		}
 		Id, err := strconv.Atoi(args[2])
 		if err != nil {
-			fmt.Println("Ошибка! не удалось получить Id задачи!")
+			fmt.Println("Ошибка! Не удалось получить Id задачи!")
 			return
 		}
 		err = commands.Done(store, Id)
@@ -87,9 +106,68 @@ func main() {
 			fmt.Println("Ошибка! Не удалось изменить статус задачи! " + err.Error())
 			return
 		}
-		fmt.Printf("Id: %d. Статус задачи изменён.\n", Id)
-
+		fmt.Printf("Id: %d. Статус задачи изменён на \"Done\".\n", Id)
+	case "in-progress":
+		if len(args) < 3 {
+			fmt.Println("Ошибка! Укажите Id задачи!")
+			return
+		}
+		Id, err := strconv.Atoi(args[2])
+		if err != nil {
+			fmt.Println("Ошибка! Не удалось получить Id задачи!")
+			return
+		}
+		err = commands.InProgress(store, Id)
+		if err != nil {
+			fmt.Println("Ошибка! Не удалось изменить статус задачи! " + err.Error())
+			return
+		}
+		fmt.Printf("Id: %d. Статус задачи изменён на \"In-Progress\".\n", Id)
+	case "update":
+		if len(args) < 4 {
+			fmt.Println("Ошибка! Недостаточно аргументов!")
+			return
+		}
+		Id, err := strconv.Atoi(args[2])
+		if err != nil {
+			fmt.Println("Ошибка! Не удалось получить Id задачи!")
+			return
+		}
+		if len(args[3]) == 0 {
+			fmt.Println("Ошибка! Укажите описание новой задачи!")
+			return
+		}
+		err = commands.Update(store, Id, args[3])
+		if err != nil {
+			fmt.Println("Ошибка! Не удалось изменить описание задачи! " + err.Error())
+			return
+		}
+		fmt.Printf("Id: %d. Описание задачи изменено.\n", Id)
+	case "help":
+		for _, function := range Help() {
+			fmt.Println(function)
+		}
 	default:
 		fmt.Println("Ошибка! Неизвестная команда!")
+	}
+}
+
+func PrintTasks(tasks []models.Task) {
+	for _, task := range tasks {
+		fmt.Printf("ID: %d;\n Задача: %s; Статус: %v;\n Дата создания: %v; Дата Последнего изменения: %v\n\n", task.ID, task.Description, task.Status, task.CreatedAt.Local().Format("02.01.2006 15:04"), task.UpdatedAt.Local().Format("02.01.2006 15:04"))
+	}
+}
+
+func Help() []string {
+	return []string{
+		"help - Вывод всех команд",
+		"add - Добавление новой задачи",
+		"delete - Удаление задачи",
+		"list - Вывод всех задач",
+		"list done - Вывод выполненных задач",
+		"list in-progress - Вывод недовыполненных задач",
+		"update - Обновление описания задачи",
+		"done - Изменение статуса задачи на \"Выполнено\"",
+		"in-progress - Изменение статуса задачи на \"В работе\"",
 	}
 }
