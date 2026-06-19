@@ -1,4 +1,3 @@
-cat > README.md << 'EOF'
 # Task Tracker CLI
 
 A simple command-line task tracker written in Go. Tasks are stored in a JSON file in your home directory, so they persist between runs.
@@ -18,7 +17,7 @@ A simple command-line task tracker written in Go. Tasks are stored in a JSON fil
 
 1. Clone the repository:
 ```bash
-   git clone https://github.com/yourusername/task-tracker-cli.git
+   git clone https://github.com/jabrail059/task-tracker-cli.git
    cd task-tracker-cli
 ```
 2. Build the binary:
